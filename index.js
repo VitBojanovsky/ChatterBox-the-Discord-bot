@@ -1,3 +1,15 @@
+const Database = require("better-sqlite3");
+const db = new Database("data.db");
+
+// Create table if it doesn't exist
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS users (
+    user_id TEXT PRIMARY KEY,
+    points INTEGER DEFAULT 0,
+    last_message INTEGER DEFAULT 0
+  )
+`).run();
+
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 

@@ -1,0 +1,28 @@
+{
+  "name": "chatterbox-the-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord bot that counts points, which can be used to gamble for cosmetics",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VitBojanovsky/ChatterBox-the-Discord-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/VitBojanovsky/ChatterBox-the-Discord-bot/issues"
+  },
+  "homepage": "https://github.com/VitBojanovsky/ChatterBox-the-Discord-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.25.1",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}

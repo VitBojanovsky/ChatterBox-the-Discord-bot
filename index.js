@@ -148,7 +148,7 @@ function handleCommands(message) {
 
 
   // Coinflip command
-  if (command === "coinflip") {
+  if (command === "coinflip" || command === "cf") {
     //check amount of args
     if (args.length !== 2) {
       message.reply("Usage: !coinflip <amount> <heads/tails>");
@@ -195,7 +195,7 @@ function handleCommands(message) {
       return;
     }
 
-    const lines = top.map((row, i) => `${i + 1}. <${row.user_id}> — ${row.points} pts`);
+    const lines = top.map((row, i) => `${i + 1}. <@${row.user_id}> — ${row.points} pts`);
     message.channel.send("**Leaderboard**\n" + lines.join("\n"));
   }
 }

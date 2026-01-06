@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const Database = require("better-sqlite3");

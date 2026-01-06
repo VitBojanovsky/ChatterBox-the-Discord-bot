@@ -85,6 +85,68 @@ function handleCommands(message) {
     message.reply(`You have ${pts} points.`);
   }
 
+  //give points
+  if (command === "give") {
+  if (args.length !== 2) {
+    message.reply("Usage: !give <@target> <amount>");
+    return;
+  }
+
+  const targetUser = message.mentions.users.first();
+  const amount = parseInt(args[1], 10);
+
+  if (!targetUser) {
+    message.reply("You must mention a valid user to give points to.");
+    return;
+  }
+
+  if (isNaN(amount) || amount <= 0) {
+    message.reply("Amount must be a positive number.");
+    return;
+  }
+
+  const giverId = message.author.id;
+
+  if (targetUser.id === giverId) {
+    message.reply("You cannot give points to yourself.");
+    return;
+  }
+
+  if (targetUser.bot) {
+    message.reply("Bots do not need points.");
+    return;
+  }
+
+  // Ensure giver exists
+  db.prepare(
+    "INSERT OR IGNORE INTO users (user_id, points, last_message) VALUES (?, 0, 0)"
+  ).run(giverId);
+
+  const giver = db.prepare(
+    "SELECT points FROM users WHERE user_id = ?"
+  ).get(giverId);
+
+  if (amount > giver.points) {
+    message.reply("You are too broke to afford that.");
+    return;
+  }
+
+  // Remove points from giver
+  db.prepare(
+    "UPDATE users SET points = points - ? WHERE user_id = ?"
+  ).run(amount, giverId);
+
+  // Add to target
+  db.prepare(`
+    INSERT INTO users (user_id, points, last_message)
+    VALUES (?, ?, 0)
+    ON CONFLICT(user_id) DO UPDATE SET points = points + ?
+  `).run(targetUser.id, amount, amount);
+
+  message.reply(`You gave ${amount} points to <@${targetUser.id}>.`);
+}
+
+
   // Coinflip command
   if (command === "coinflip") {
     //check amount of args
@@ -100,7 +162,7 @@ function handleCommands(message) {
     const user = db.prepare("SELECT points FROM users WHERE user_id = ?").get(userId);
     const points = user ? user.points : 0; 
     if(amount > points) {
-      message.reply("You are to broke to gamble that amount. As broke as Martin.");
+      message.reply("You are too broke to gamble that amount. you are as broke as Martin.");
       return;
     }
 
@@ -133,7 +195,7 @@ function handleCommands(message) {
       return;
     }
 
-    const lines = top.map((row, i) => `${i + 1}. <@${row.user_id}> — ${row.points} pts`);
+    const lines = top.map((row, i) => `${i + 1}. <${row.user_id}> — ${row.points} pts`);
     message.channel.send("**Leaderboard**\n" + lines.join("\n"));
   }
 }

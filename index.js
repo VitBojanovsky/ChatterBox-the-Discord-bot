@@ -1,9 +1,9 @@
-// index.js
+
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
 const Database = require("better-sqlite3");
 
-// ---- Discord setup ----
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -15,7 +15,7 @@ const client = new Client({
 
 const PREFIX = "!";
 
-// ---- Database setup ----
+
 const db = new Database("data.db");
 
 db.prepare(`
@@ -26,7 +26,7 @@ db.prepare(`
   )
 `).run();
 
-// ---- Bot events ----
+
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
@@ -38,30 +38,39 @@ client.on("messageCreate", message => {
   handleCommands(message);
 });
 
-// ---- Functions ----
+
 function handlePoints(message) {
   const userId = message.author.id;
   const now = Date.now();
 
-  // Get user from DB
+  
   let user = db.prepare("SELECT * FROM users WHERE user_id = ?").get(userId);
 
-  // Insert user if they don't exist
+  
   if (!user) {
     db.prepare("INSERT INTO users (user_id, points, last_message) VALUES (?, ?, ?)")
       .run(userId, 0, 0);
     user = { user_id: userId, points: 0, last_message: 0 };
   }
 
-  // Cooldown and message length check
-  const cooldown = 60 * 1000; // 1 minute
+  
+  const cooldown = 60 * 1000; 
   if (now - user.last_message < cooldown) return;
   if (message.content.trim().length < 5) return;
 
-  // Update points and last_message
+  
   db.prepare("UPDATE users SET points = points + 1, last_message = ? WHERE user_id = ?")
     .run(now, userId);
 }
+
+function coinflip() {
+  const rand = Math.random();
+  if (rand < 0.5) {
+    return "heads";
+  } else {
+    return "tails";
+  } 
+  }
 
 function handleCommands(message) {
   if (!message.content.startsWith(PREFIX)) return;
@@ -76,6 +85,27 @@ function handleCommands(message) {
     message.reply(`You have ${pts} points.`);
   }
 
+  // Coinflip command
+  if (command === "coinflip") {
+    //check amount of args
+    if (args.length !== 2) {
+      message.reply("Usage: !coinflip <amount> <heads/tails>");
+  }
+    const amount = parseInt(args[0], 10);
+    const choice = args[1].toLowerCase();
+
+    //check if player has money to gamble
+    const userId = message.author.id;
+    const user = db.prepare("SELECT points FROM users WHERE user_id = ?").get(userId);
+    const points = user ? user.points : 0; 
+    if(amount > points) {
+      message.reply("You are to broke to gamble that amount. As broke as Martin.");
+      return;
+    }
+
+
+
+  }
   // Show leaderboard
   if (command === "leaderboard") {
     const top = db.prepare("SELECT user_id, points FROM users ORDER BY points DESC LIMIT 5").all();

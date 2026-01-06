@@ -216,15 +216,25 @@ function handleCommands(message) {
     }
 
   }
+
+// aby mi to adam nedojebaval
+const spinningUsers = new Set();
+
 //tocky
 if (command === "spin") {
+  const userId = message.author.id;
+
+  if (spinningUsers.has(userId)) {
+    message.reply("You already have a spin in progress! Wait until it finishes.");
+    return;
+  }
+
   if (args.length !== 1) {
     message.reply("Usage: !spin <amount>");
     return;
   }
 
   const amount = parseInt(args[0], 10);
-  const userId = message.author.id;
 
   if (isNaN(amount) || amount <= 0) {
     message.reply("You must enter a valid amount to gamble.");
@@ -232,13 +242,8 @@ if (command === "spin") {
   }
 
   // Ensure user exists
-  db.prepare(
-    "INSERT OR IGNORE INTO users (user_id, points, last_message) VALUES (?, 0, 0)"
-  ).run(userId);
-
-  const user = db.prepare(
-    "SELECT points FROM users WHERE user_id = ?"
-  ).get(userId);
+  db.prepare("INSERT OR IGNORE INTO users (user_id, points, last_message) VALUES (?, 0, 0)").run(userId);
+  const user = db.prepare("SELECT points FROM users WHERE user_id = ?").get(userId);
 
   if (amount > user.points) {
     message.reply("You are too broke to gamble that amount.");
@@ -246,9 +251,10 @@ if (command === "spin") {
   }
 
   // Deduct points upfront
-  db.prepare(
-    "UPDATE users SET points = points - ? WHERE user_id = ?"
-  ).run(amount, userId);
+  db.prepare("UPDATE users SET points = points - ? WHERE user_id = ?").run(amount, userId);
+
+  // Mark user as spinning
+  spinningUsers.add(userId);
 
   const ovoce = ["🍒", "🍇", "🍍", "🍉", "⭐", "7️⃣"];
   let spin1 = 0;
@@ -271,6 +277,9 @@ if (command === "spin") {
       const win = amount * 10;
       db.prepare("UPDATE users SET points = points + ? WHERE user_id = ?").run(win, userId);
       message.channel.send(`🎉 Jackpot! ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You won ${win} points!`);
+
+      // Remove user from spinning set
+      spinningUsers.delete(userId);
       return;
     }
 
@@ -278,9 +287,13 @@ if (command === "spin") {
     if (ticks >= 5) {
       clearInterval(interval);
       message.channel.send(`💀 Final result: ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You lost ${amount} points.`);
+
+      // Remove user from spinning set
+      spinningUsers.delete(userId);
     }
   }, 1000);
 }
+
 
 
 

@@ -90,6 +90,7 @@ function handleCommands(message) {
     //check amount of args
     if (args.length !== 2) {
       message.reply("Usage: !coinflip <amount> <heads/tails>");
+      return
   }
     const amount = parseInt(args[0], 10);
     const choice = args[1].toLowerCase();
@@ -102,6 +103,23 @@ function handleCommands(message) {
       message.reply("You are to broke to gamble that amount. As broke as Martin.");
       return;
     }
+
+    //check if choice is valid
+    if (choice !== "heads" && choice !== "tails") {
+      message.reply("Your choice must be either 'heads' or 'tails', idiot");
+      return;
+    }
+    const result = coinflip();
+    if (result === choice) {
+      db.prepare("UPDATE users SET points = points + ? WHERE user_id = ?")
+        .run(amount, userId);
+      message.reply(`The coin landed on **${result}**! You won ${amount} points!`);
+    } else {
+      db.prepare("UPDATE users SET points = points - ? WHERE user_id = ?")
+        .run(amount, userId);
+      message.reply(`The coin landed on **${result}**! You lost ${amount} points!`);
+    }
+
 
 
 

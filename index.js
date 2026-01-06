@@ -226,7 +226,6 @@ if (command === "spin") {
   const amount = parseInt(args[0], 10);
   const userId = message.author.id;
 
-  // Validate input
   if (isNaN(amount) || amount <= 0) {
     message.reply("You must enter a valid amount to gamble.");
     return;
@@ -251,45 +250,38 @@ if (command === "spin") {
     "UPDATE users SET points = points - ? WHERE user_id = ?"
   ).run(amount, userId);
 
-  // Slot symbols
   const ovoce = ["🍒", "🍇", "🍍", "🍉", "⭐", "7️⃣"];
-
-  // Initialize spins
   let spin1 = 0;
   let spin2 = 0;
   let spin3 = 0;
   let ticks = 0;
 
-  // Start interval for spinning
   const interval = setInterval(() => {
     spin1 = Math.floor(Math.random() * ovoce.length);
     spin2 = Math.floor(Math.random() * ovoce.length);
     spin3 = Math.floor(Math.random() * ovoce.length);
 
-    // Show spin each tick
-    message.channel.send(`🎰 ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]}`);
+    message.channel.send(`${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]}`);
 
     ticks++;
 
-    // After 5 ticks, stop and show result
+    // Stop early if all three match
+    if (spin1 === spin2 && spin2 === spin3) {
+      clearInterval(interval);
+      const win = amount * 10;
+      db.prepare("UPDATE users SET points = points + ? WHERE user_id = ?").run(win, userId);
+      message.channel.send(`🎉 Jackpot! ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You won ${win} points!`);
+      return;
+    }
+
+    // Stop after max 5 spins
     if (ticks >= 5) {
       clearInterval(interval);
-      message.channel.send(`🎰 Final result: ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]}`);
-
-      // Check win
-      if (spin1 === spin2 && spin2 === spin3) {
-        const win = amount * 10;
-        db.prepare(
-          "UPDATE users SET points = points + ? WHERE user_id = ?"
-        ).run(win, userId);
-
-        message.channel.send(`🎉 You won ${win} points!`);
-      } else {
-        message.channel.send(`💀 You lost ${amount} points.`);
-      }
+      message.channel.send(`💀 Final result: ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You lost ${amount} points.`);
     }
   }, 1000);
 }
+
 
 
 

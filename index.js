@@ -81,6 +81,16 @@ function handleCommands(message) {
   if (command === "points") {
     const user = db.prepare("SELECT points FROM users WHERE user_id = ?").get(message.author.id);
     const pts = user ? user.points : 0;
+
+    //check if points are undefined
+    
+    if (isNaN(pts) || pts <= 0) {
+      //set points to 0 
+      db.prepare("INSERT OR IGNORE INTO users (user_id, points, last_message) VALUES (?, 0, 0)").run(message.author.id);
+      message.reply("You have 0 points.");
+      return;
+    }
+
     message.reply(`You have ${pts} points.`);
   }
 
@@ -156,6 +166,13 @@ function handleCommands(message) {
     const amount = parseInt(args[0], 10);
     const choice = args[1].toLowerCase();
 
+    //check if amount is a number
+    if (isNaN(amount) || amount <= 0) {
+      message.reply("You must enter a valid amount to gamble.");
+      return;
+    }
+    
+
     //check if player has money to gamble
     const userId = message.author.id;
     const user = db.prepare("SELECT points FROM users WHERE user_id = ?").get(userId);
@@ -190,6 +207,13 @@ function handleCommands(message) {
     }
     const amount = parseInt(args[0], 10);
     const choice = parseInt(args[1], 10);
+
+       //check if amount is a valid number
+    if (isNaN(amount) || amount <= 0) {
+      message.reply("You must enter a valid amount to gamble.");
+      return;
+    }
+
     //check if player has money to gamble
     const userId = message.author.id;
     const user = db.prepare("SELECT points FROM users WHERE user_id = ?").get(userId);
@@ -235,10 +259,11 @@ if (command === "spin") {
 
   const amount = parseInt(args[0], 10);
 
-  if (isNaN(amount) || amount <= 0) {
-    message.reply("You must enter a valid amount to gamble.");
-    return;
-  }
+    //check if amount is a valid number
+    if (isNaN(amount) || amount <= 0) {
+      message.reply("You must enter a valid amount to gamble.");
+      return;
+    }
 
   // Ensure user exists
   db.prepare("INSERT OR IGNORE INTO users (user_id, points, last_message) VALUES (?, 0, 0)").run(userId);

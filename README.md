@@ -11,4 +11,4 @@ Gives the player money from other player
 ## Games
 ``!coinflip``
 ``!spin``
-``!throw``
+``!diceroll``

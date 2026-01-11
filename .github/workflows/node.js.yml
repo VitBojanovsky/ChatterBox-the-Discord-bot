@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [2.12.0] # Node.js version, adjust if needed
+        node-version: [24.12.0] # Node.js version, adjust if needed
 
     steps:
       # Checkout repo

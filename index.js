@@ -267,27 +267,34 @@ async function handleCommands(message) {
     let spin1 = 0, spin2 = 0, spin3 = 0;
     let ticks = 0;
 
-    const interval = setInterval(() => {
+    spin1 = Math.floor(Math.random() * ovoce.length);
+    spin2 = Math.floor(Math.random() * ovoce.length);
+    spin3 = Math.floor(Math.random() * ovoce.length);
+
+    const spinMessage = await message.channel.send(`${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} (5 spins remaining)`);
+
+    const interval = setInterval(async () => {
       spin1 = Math.floor(Math.random() * ovoce.length);
       spin2 = Math.floor(Math.random() * ovoce.length);
       spin3 = Math.floor(Math.random() * ovoce.length);
 
-      message.channel.send(`${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]}`);
       ticks++;
 
       if (spin1 === spin2 && spin2 === spin3) {
         clearInterval(interval);
         const win = amount * 10;
-        updateUserPoints(userId, win);
-        message.channel.send(`🎉 Jackpot! ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You won ${win} points!`);
+        await updateUserPoints(userId, win);
+        await spinMessage.edit(`🎉 Jackpot! ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You won ${win} points!`);
         spinningUsers.delete(userId);
         return;
       }
 
       if (ticks >= 5) {
         clearInterval(interval);
-        message.channel.send(`💀 Final result: ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You lost ${amount} points.`);
+        await spinMessage.edit(`💀 Final result: ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You lost ${amount} points.`);
         spinningUsers.delete(userId);
+      } else {
+        await spinMessage.edit(`${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} (${5 - ticks} spins remaining)`);
       }
     }, 1000);
   }

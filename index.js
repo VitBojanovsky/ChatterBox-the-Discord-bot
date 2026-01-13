@@ -310,6 +310,9 @@ async function handleCommands(message) {
         message.channel.send("**Leaderboard**\n" + lines.join("\n"));
     }
 
+    if(command==="help") {
+        message.reply("https://github.com/VitBojanovsky/ChatterBox-the-Discord-bot/blob/main/README.md");
+    }
 
     // Shop with roles
     if (command === "shop") {

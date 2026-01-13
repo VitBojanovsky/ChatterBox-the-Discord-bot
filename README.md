@@ -1,6 +1,6 @@
 # ChatterBox-the-Discord-bot
 Discord bot that counts points, which can be used to gamble.
-# useage
+# usage
 ``!points`` 
 this will display the amount of points you have, the points are awarded for typing non spam oroginal messages
 ``!leaderboard`` 

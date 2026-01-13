@@ -320,9 +320,11 @@ async function handleCommands(message) {
       message.reply("Usage: !buy <item_ID>");
       return;
     }
-    //define user
-    user = await getUser(userId);
+   
+    await createUserIfMissing(userId);
+    const user = await getUser(userId);
     const balance = user.points;
+    
     const itemId = args[0];
     //check if item ID is a number
     if (isNaN(itemId)) {

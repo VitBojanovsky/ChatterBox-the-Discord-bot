@@ -26,7 +26,7 @@ db.prepare(`
 
 // ---- In-memory cooldowns and spin tracking ----
 const messageCooldown = 60 * 1000; // 60s per message
-const spinCooldownMS = 10 * 1000; // 10s per user
+const spinCooldownMS = 7 * 1000; // 7s per user
 const userMessageTimestamps = new Map();
 const spinCooldown = new Map();
 const spinningUsers = new Set();

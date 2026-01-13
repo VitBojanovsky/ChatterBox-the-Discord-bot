@@ -327,6 +327,8 @@ async function handleCommands(message) {
       message.reply("Item ID must be a number.");
       return;
     }
+    //get user ID
+    const userId = message.author.id;
     switch(itemId) {
       case 1:
         if(balance>=1000000) {

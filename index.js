@@ -324,15 +324,13 @@ async function handleCommands(message) {
     await createUserIfMissing(userId);
     const user = await getUser(userId);
     const balance = user.points;
-    
+
     const itemId = args[0];
     //check if item ID is a number
     if (isNaN(itemId)) {
       message.reply("Item ID must be a number.");
       return;
     }
-    //get user ID
-    const userId = message.author.id;
     switch(itemId) {
       case 1:
         if(balance>=1000000) {

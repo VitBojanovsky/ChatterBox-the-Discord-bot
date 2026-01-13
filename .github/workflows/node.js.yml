@@ -33,10 +33,10 @@ jobs:
       - name: Build (if applicable)
         run: npm run build --if-present
 
-      # Run test: syntax check and lint (no Discord token needed)
-      - name: Run tests (syntax check)
-        run: |
-          # Ignore .env file, no Discord login
-          node --check index.js
-          # Optional: lint
-          npx eslint index.js || true
+      # Syntax check
+      - name: Check syntax
+        run: node --check index.js
+
+      # ESLint
+      - name: Run ESLint
+        run: npx eslint index.js --max-warnings 0

@@ -412,7 +412,7 @@ async function handleCommands(message) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
-                if (role === null) {
+                if (role === undefined || role === null) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 4 - Creating role`);
                     message.guild.roles.create({ name: "sigma matyjáš s velkým m", color: "GREEN" });

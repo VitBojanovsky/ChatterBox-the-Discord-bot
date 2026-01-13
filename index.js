@@ -348,7 +348,7 @@ async function handleCommands(message) {
                 if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 1 - Creating role`);
-                    role = await message.guild.roles.create({ name: "Pro gambler", color: "GOLD" });
+                    role = await message.guild.roles.create({ name: "Pro gambler", color: "#FFD700" });
                 }
                 //give role to user
                 console.log(`[DEBUG] Case 1 - Updating points and adding role`);
@@ -371,7 +371,7 @@ async function handleCommands(message) {
                 if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 2 - Creating role`);
-                    role = await message.guild.roles.create({ name: "Ultra gambler", color: "PURPLE" });
+                    role = await message.guild.roles.create({ name: "Ultra gambler", color: "#9B59B6" });
                 }
                 console.log(`[DEBUG] Case 2 - Updating points and adding role`);
                 await updateUserPoints(userId, -5000000);
@@ -393,7 +393,7 @@ async function handleCommands(message) {
                 if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 3 - Creating role`);
-                    role = await message.guild.roles.create({ name: "siGma gambler", color: "BLUE" });
+                    role = await message.guild.roles.create({ name: "siGma gambler", color: "#3498DB" });
                 }
                 console.log(`[DEBUG] Case 3 - Updating points and adding role`);
                 await updateUserPoints(userId, -10000000);
@@ -415,7 +415,7 @@ async function handleCommands(message) {
                 if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 4 - Creating role`);
-                    role = await message.guild.roles.create({ name: "sigma matyjáš s velkým m", color: "GREEN" });
+                    role = await message.guild.roles.create({ name: "sigma matyjáš s velkým m", color: "#2ECC71" });
                 }
                 console.log(`[DEBUG] Case 4 - Updating points and adding role`);
                 await updateUserPoints(userId, -2);

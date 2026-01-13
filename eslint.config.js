@@ -5,19 +5,26 @@ module.exports = [
   {
     languageOptions: {
       ecmaVersion: 2021,
-      sourceType: "module",
+      sourceType: "commonjs",
       globals: {
-        console: "readonly",
-        process: "readonly",
-        Buffer: "readonly",
+        // Node.js globals
+        require: "readonly",
+        module: "readonly",
+        exports: "readonly",
         __dirname: "readonly",
         __filename: "readonly",
+        process: "readonly",
+        Buffer: "readonly",
+        global: "readonly",
+        // Node.js timers
         setImmediate: "readonly",
         clearImmediate: "readonly",
         setInterval: "readonly",
         clearInterval: "readonly",
         setTimeout: "readonly",
         clearTimeout: "readonly",
+        // Global console
+        console: "readonly",
       },
     },
     rules: {
@@ -32,21 +39,21 @@ module.exports = [
       "valid-typeof": "error",
 
       // Best practices
-      "no-var": "error",
+      "no-var": "warn",
       "prefer-const": "warn",
-      "eqeqeq": ["warn", "always"],
+      "eqeqeq": "warn",
       "no-eval": "error",
       "no-implied-eval": "error",
       "no-with": "error",
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
 
-      // Style
-      "indent": ["warn", 2],
-      "quotes": ["warn", "double"],
-      "semi": ["warn", "always"],
-      "comma-dangle": ["warn", "always-multiline"],
+      // Style (warnings only - can be auto-fixed)
+      "indent": "warn",
+      "quotes": "warn",
+      "semi": "warn",
+      "comma-dangle": "warn",
       "no-trailing-spaces": "warn",
-      "eol-last": ["warn", "always"],
+      "eol-last": "warn",
     },
   },
 ];

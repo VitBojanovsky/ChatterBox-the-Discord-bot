@@ -325,81 +325,111 @@ async function handleCommands(message) {
         const user = await getUser(userId);
         const balance = user.points;
 
-        const itemId = args[0];
+        const itemId = parseInt(args[0], 10);
+        console.log(`[DEBUG] Buy command - userId: ${userId}, itemId: ${itemId}, balance: ${balance}`);
         //check if item ID is a number
         if (isNaN(itemId)) {
             message.reply("Item ID must be a number.");
             return;
         }
+        console.log(`[DEBUG] ItemId is valid number: ${itemId}`);
         switch(itemId) {
         case 1:
+            console.log(`[DEBUG] Case 1 - Checking balance ${balance} >= 1000000`);
             if(balance>=1000000) {
+                console.log(`[DEBUG] Case 1 - Balance sufficient, finding role`);
                 //check if user already has that role
                 const role = message.guild.roles.cache.find(r => r.name === "Pro gambler");
+                console.log(`[DEBUG] Case 1 - Role found:`, role);
                 if(message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
                 if (role === null) {
                     //create role if it doesn't exist
+                    console.log(`[DEBUG] Case 1 - Creating role`);
                     message.guild.roles.create({ name: "Pro gambler", color: "GOLD" });
                 }
                 //give role to user
+                console.log(`[DEBUG] Case 1 - Updating points and adding role`);
                 await updateUserPoints(userId, -1000000);
-                message.member.roles.add(role);
+                await message.member.roles.add(role);
                 message.reply("You have successfully purchased the Pro gambler role!");
                 break;
             }
+            console.log(`[DEBUG] Case 1 - Balance not sufficient`);
         case 2:
+            console.log(`[DEBUG] Case 2 - Checking balance ${balance} >= 5000000`);
             if(balance>=5000000) {
+                console.log(`[DEBUG] Case 2 - Balance sufficient, finding role`);
                 const role = message.guild.roles.cache.find(r => r.name === "Ultra gambler");
+                console.log(`[DEBUG] Case 2 - Role found:`, role);
                 if(message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
                 if (role === null) {
                     //create role if it doesn't exist
+                    console.log(`[DEBUG] Case 2 - Creating role`);
                     message.guild.roles.create({ name: "Ultra gambler", color: "PURPLE" });
                 }
+                console.log(`[DEBUG] Case 2 - Updating points and adding role`);
                 await updateUserPoints(userId, -5000000);
-                message.member.roles.add(role);
+                await message.member.roles.add(role);
                 message.reply("You have successfully purchased the Ultra gambler role!");
                 break;
             }
+            console.log(`[DEBUG] Case 2 - Balance not sufficient`);
         case 3:
+            console.log(`[DEBUG] Case 3 - Checking balance ${balance} >= 10000000`);
             if(balance>=10000000) {
+                console.log(`[DEBUG] Case 3 - Balance sufficient, finding role`);
                 const role = message.guild.roles.cache.find(r => r.name === "siGma gambler");
+                console.log(`[DEBUG] Case 3 - Role found:`, role);
                 if(message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, normally I would call you an idiot, but owning this is quite impressive, thank you for gambling so much.");
                     return;
                 }
                 if (role === null) {
                     //create role if it doesn't exist
+                    console.log(`[DEBUG] Case 3 - Creating role`);
                     message.guild.roles.create({ name: "siGma gambler", color: "BLUE" });
                 }
+                console.log(`[DEBUG] Case 3 - Updating points and adding role`);
                 await updateUserPoints(userId, -10000000);
-                message.member.roles.add(role);
+                await message.member.roles.add(role);
                 message.reply("You have successfully purchased the siGma gambler role!");
                 break;
             }
+            console.log(`[DEBUG] Case 3 - Balance not sufficient`);
         case 4:
+            console.log(`[DEBUG] Case 4 - Checking balance ${balance} >= 2`);
             if(balance>=2) {
+                console.log(`[DEBUG] Case 4 - Balance sufficient, finding role`);
                 const role = message.guild.roles.cache.find(r => r.name === "sigma matyjáš s velkým m");
+                console.log(`[DEBUG] Case 4 - Role found:`, role);
                 if(message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
                 if (role === null) {
                     //create role if it doesn't exist
+                    console.log(`[DEBUG] Case 4 - Creating role`);
                     message.guild.roles.create({ name: "sigma matyjáš s velkým m", color: "GREEN" });
                 }
+                console.log(`[DEBUG] Case 4 - Updating points and adding role`);
                 await updateUserPoints(userId, -2);
-                message.member.roles.add(role);
+                await message.member.roles.add(role);
                 message.reply("You have successfully purchased the sigma matyjáš s velkým m role!");
                 break;
             }
-
+            console.log(`[DEBUG] Case 4 - Balance not sufficient`);
+            default:
+            console.log(`[DEBUG] Default case - Invalid itemId: ${itemId}`);
+            message.reply("You do not have enough points to buy this item or invalid item ID.");
+            return;
         }
+        
 
 
     // Assign role if item has role_id

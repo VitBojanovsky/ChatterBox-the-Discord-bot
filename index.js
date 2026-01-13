@@ -340,7 +340,7 @@ async function handleCommands(message) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
-                if (role == null) {
+                if (role === null) {
                     //create role if it doesn't exist
                     message.guild.roles.create({ name: "Pro gambler", color: "GOLD" });
                 }
@@ -357,7 +357,7 @@ async function handleCommands(message) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
-                if (role == null) {
+                if (role === null) {
                     //create role if it doesn't exist
                     message.guild.roles.create({ name: "Ultra gambler", color: "PURPLE" });
                 }
@@ -373,7 +373,7 @@ async function handleCommands(message) {
                     message.reply("You already own this role, normally I would call you an idiot, but owning this is quite impressive, thank you for gambling so much.");
                     return;
                 }
-                if (role == null) {
+                if (role === null) {
                     //create role if it doesn't exist
                     message.guild.roles.create({ name: "siGma gambler", color: "BLUE" });
                 }
@@ -389,7 +389,7 @@ async function handleCommands(message) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
-                if (role == null) {
+                if (role === null) {
                     //create role if it doesn't exist
                     message.guild.roles.create({ name: "sigma matyjáš s velkým m", color: "GREEN" });
                 }

@@ -339,16 +339,16 @@ async function handleCommands(message) {
             if(balance>=1000000) {
                 console.log(`[DEBUG] Case 1 - Balance sufficient, finding role`);
                 //check if user already has that role
-                const role = message.guild.roles.cache.find(r => r.name === "Pro gambler");
+                let role = message.guild.roles.cache.find(r => r.name === "Pro gambler");
                 console.log(`[DEBUG] Case 1 - Role found:`, role);
-                if(message.member.roles.cache.has(role.id)) {
+                if(role && message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
-                if (role === null) {
+                if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 1 - Creating role`);
-                    message.guild.roles.create({ name: "Pro gambler", color: "GOLD" });
+                    role = await message.guild.roles.create({ name: "Pro gambler", color: "GOLD" });
                 }
                 //give role to user
                 console.log(`[DEBUG] Case 1 - Updating points and adding role`);
@@ -362,16 +362,16 @@ async function handleCommands(message) {
             console.log(`[DEBUG] Case 2 - Checking balance ${balance} >= 5000000`);
             if(balance>=5000000) {
                 console.log(`[DEBUG] Case 2 - Balance sufficient, finding role`);
-                const role = message.guild.roles.cache.find(r => r.name === "Ultra gambler");
+                let role = message.guild.roles.cache.find(r => r.name === "Ultra gambler");
                 console.log(`[DEBUG] Case 2 - Role found:`, role);
-                if(message.member.roles.cache.has(role.id)) {
+                if(role && message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
-                if (role === null) {
+                if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 2 - Creating role`);
-                    message.guild.roles.create({ name: "Ultra gambler", color: "PURPLE" });
+                    role = await message.guild.roles.create({ name: "Ultra gambler", color: "PURPLE" });
                 }
                 console.log(`[DEBUG] Case 2 - Updating points and adding role`);
                 await updateUserPoints(userId, -5000000);
@@ -384,16 +384,16 @@ async function handleCommands(message) {
             console.log(`[DEBUG] Case 3 - Checking balance ${balance} >= 10000000`);
             if(balance>=10000000) {
                 console.log(`[DEBUG] Case 3 - Balance sufficient, finding role`);
-                const role = message.guild.roles.cache.find(r => r.name === "siGma gambler");
+                let role = message.guild.roles.cache.find(r => r.name === "siGma gambler");
                 console.log(`[DEBUG] Case 3 - Role found:`, role);
-                if(message.member.roles.cache.has(role.id)) {
+                if(role && message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, normally I would call you an idiot, but owning this is quite impressive, thank you for gambling so much.");
                     return;
                 }
-                if (role === null) {
+                if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 3 - Creating role`);
-                    message.guild.roles.create({ name: "siGma gambler", color: "BLUE" });
+                    role = await message.guild.roles.create({ name: "siGma gambler", color: "BLUE" });
                 }
                 console.log(`[DEBUG] Case 3 - Updating points and adding role`);
                 await updateUserPoints(userId, -10000000);
@@ -406,16 +406,16 @@ async function handleCommands(message) {
             console.log(`[DEBUG] Case 4 - Checking balance ${balance} >= 2`);
             if(balance>=2) {
                 console.log(`[DEBUG] Case 4 - Balance sufficient, finding role`);
-                const role = message.guild.roles.cache.find(r => r.name === "sigma matyjáš s velkým m");
+                let role = message.guild.roles.cache.find(r => r.name === "sigma matyjáš s velkým m");
                 console.log(`[DEBUG] Case 4 - Role found:`, role);
-                if(message.member.roles.cache.has(role.id)) {
+                if(role && message.member.roles.cache.has(role.id)) {
                     message.reply("You already own this role, dumbo.");
                     return;
                 }
-                if (role === undefined || role === null) {
+                if (!role) {
                     //create role if it doesn't exist
                     console.log(`[DEBUG] Case 4 - Creating role`);
-                    message.guild.roles.create({ name: "sigma matyjáš s velkým m", color: "GREEN" });
+                    role = await message.guild.roles.create({ name: "sigma matyjáš s velkým m", color: "GREEN" });
                 }
                 console.log(`[DEBUG] Case 4 - Updating points and adding role`);
                 await updateUserPoints(userId, -2);

@@ -309,6 +309,97 @@ async function handleCommands(message) {
     const lines = top.map((row, i) => `${i + 1}. <@${row.user_id}> — ${row.points} pts`);
     message.channel.send("**Leaderboard**\n" + lines.join("\n"));
   }
+
+
+  // Shop with roles
+  if (command === "shop") {
+    message.reply("To buy items from the shop, type !buy <item_ID>\n Available items: \n1.  Pro gambler role - 1 000 000 points\n2. Ultra gambler - 5 000 000 points\n3. siGma gambler role - 10 000 000 points\n4. sigma matyjáš s velkým m - 2 points");
+  }
+  if (command === "buy") {
+    if (args.length !== 1) {
+      message.reply("Usage: !buy <item_ID>");
+      return;
+    }
+    const balance = user.points;
+    const itemId = args[0];
+    //check if item ID is a number
+    if (isNaN(itemId)) {
+      message.reply("Item ID must be a number.");
+      return;
+    }
+    switch(itemId) {
+      case 1:
+        if(balance>=1000000) {
+          //check if user already has that role
+          const role = message.guild.roles.cache.find(r => r.name === "Pro gambler");
+          if(message.member.roles.cache.has(role.id)) {
+            message.reply("You already own this role, dumbo.");
+            return;
+          }
+          if (role == null) {
+            //create role if it doesn't exist
+            message.guild.roles.create({ name: 'Pro gambler', color: 'GOLD' })   
+          }
+          //give role to user
+          await updateUserPoints(userId, -1000000);
+          message.member.roles.add(role);
+          message.reply("You have successfully purchased the Pro gambler role!");
+          break;
+        }
+        case 2:
+        if(balance>=5000000) {
+          const role = message.guild.roles.cache.find(r => r.name === "Ultra gambler");
+          if(message.member.roles.cache.has(role.id)) {
+            message.reply("You already own this role, dumbo.");
+            return;
+          }
+          if (role == null) {
+            //create role if it doesn't exist
+            message.guild.roles.create({ name: 'Ultra gambler', color: 'PURPLE' })   
+          }
+          await updateUserPoints(userId, -5000000);
+          message.member.roles.add(role);
+          message.reply("You have successfully purchased the Ultra gambler role!");
+          break;
+        }
+      case 3:
+        if(balance>=10000000) {
+          const role = message.guild.roles.cache.find(r => r.name === "siGma gambler");
+          if(message.member.roles.cache.has(role.id)) {
+            message.reply("You already own this role, normally I would call you an idiot, but owning this is quite impressive, thank you for gambling so much.");
+            return;
+          }
+          if (role == null) {
+            //create role if it doesn't exist
+            message.guild.roles.create({ name: 'siGma gambler', color: 'BLUE' })   
+          }
+          await updateUserPoints(userId, -10000000);
+          message.member.roles.add(role);
+          message.reply("You have successfully purchased the siGma gambler role!");
+          break;
+        }
+      case 4:
+        if(balance>=2) {
+          const role = message.guild.roles.cache.find(r => r.name === "sigma matyjáš s velkým m");
+          if(message.member.roles.cache.has(role.id)) {
+            message.reply("You already own this role, dumbo.");
+            return;
+          }
+          if (role == null) {
+            //create role if it doesn't exist
+            message.guild.roles.create({ name: 'sigma matyjáš s velkým m', color: 'GREEN' })   
+          }
+          await updateUserPoints(userId, -2);
+          message.member.roles.add(role);
+          message.reply("You have successfully purchased the sigma matyjáš s velkým m role!");
+          break;
+        }
+
+    }
+
+    
+    // Assign role if item has role_id
+  }
 }
 
 // ---- Run bot ----

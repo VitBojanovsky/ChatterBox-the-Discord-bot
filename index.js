@@ -73,6 +73,194 @@ client.on("messageCreate", async message => {
     await handleCommands(message);
 });
 
+// ---- Event: Slash Command Interaction ----
+client.on("interactionCreate", async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const userId = interaction.user.id;
+    await createUserIfMissing(userId);
+
+    // ---- /points ----
+    if (interaction.commandName === "points") {
+        const user = await getUser(userId);
+        const pts = user ? user.points : 0;
+        await interaction.reply(`You have ${pts} points.`);
+    }
+
+    // ---- /give ----
+    if (interaction.commandName === "give") {
+        const targetUser = interaction.options.getUser("target");
+        const amount = interaction.options.getInteger("amount");
+
+        if (targetUser.id === userId) {
+            await interaction.reply({ content: "You cannot give points to yourself.", ephemeral: true });
+            return;
+        }
+
+        if (targetUser.bot) {
+            await interaction.reply({ content: "Bots do not need points.", ephemeral: true });
+            return;
+        }
+
+        if (amount <= 0) {
+            await interaction.reply({ content: "Amount must be a positive number.", ephemeral: true });
+            return;
+        }
+
+        await createUserIfMissing(targetUser.id);
+
+        const giver = await getUser(userId);
+        if (amount > giver.points) {
+            await interaction.reply({ content: "You are too broke to afford that.", ephemeral: true });
+            return;
+        }
+
+        await updateUserPoints(userId, -amount);
+        await updateUserPoints(targetUser.id, amount);
+
+        await interaction.reply(`You gave ${amount} points to <@${targetUser.id}>.`);
+    }
+
+    // ---- /coinflip ----
+    if (interaction.commandName === "coinflip") {
+        const amount = interaction.options.getInteger("amount");
+        const choice = interaction.options.getString("choice");
+
+        if (amount <= 0) {
+            await interaction.reply({ content: "You must enter a valid amount to gamble.", ephemeral: true });
+            return;
+        }
+
+        const user = await getUser(userId);
+
+        if (amount > user.points) {
+            await interaction.reply({ content: "You are too broke to gamble that amount. you are as broke as Martin.", ephemeral: true });
+            return;
+        }
+
+        const result = coinflip();
+        if (result === choice) {
+            await updateUserPoints(userId, amount);
+            await interaction.reply(`The coin landed on **${result}**! You won ${amount} points!`);
+        } else {
+            await updateUserPoints(userId, -amount);
+            await interaction.reply(`The coin landed on **${result}**! You lost ${amount} points!`);
+        }
+    }
+
+    // ---- /diceroll ----
+    if (interaction.commandName === "diceroll") {
+        const amount = interaction.options.getInteger("amount");
+        const choice = interaction.options.getInteger("choice");
+
+        if (amount <= 0) {
+            await interaction.reply({ content: "You must enter a valid amount to gamble.", ephemeral: true });
+            return;
+        }
+
+        if (choice < 1 || choice > 6) {
+            await interaction.reply({ content: "Your choice must be a number between 1 and 6, idiot", ephemeral: true });
+            return;
+        }
+
+        const user = await getUser(userId);
+
+        if (amount > user.points) {
+            await interaction.reply({ content: "You are too broke to gamble that amount. you are as broke as Martin.", ephemeral: true });
+            return;
+        }
+
+        const result = Math.floor(Math.random() * 6) + 1;
+        if (result === choice) {
+            await updateUserPoints(userId, amount * 5);
+            await interaction.reply(`The dice rolled a **${result}**! You won ${amount * 5} points!`);
+        } else {
+            await updateUserPoints(userId, -amount);
+            await interaction.reply(`The dice rolled a **${result}**! You lost ${amount} points!`);
+        }
+    }
+
+    // ---- /spin ----
+    if (interaction.commandName === "spin") {
+        const now = Date.now();
+        const lastSpin = spinCooldown.get(userId) || 0;
+        if (now - lastSpin < spinCooldownMS) {
+            await interaction.reply({ 
+                content: `You must wait ${Math.ceil((spinCooldownMS - (now - lastSpin))/1000)}s before spinning again.`,
+                ephemeral: true 
+            });
+            return;
+        }
+        spinCooldown.set(userId, now);
+
+        if (spinningUsers.has(userId)) {
+            await interaction.reply({ content: "You already have a spin in progress! Wait until it finishes.", ephemeral: true });
+            return;
+        }
+
+        const amount = interaction.options.getInteger("amount");
+        if (amount <= 0) {
+            await interaction.reply({ content: "You must enter a valid amount to gamble.", ephemeral: true });
+            return;
+        }
+
+        const user = await getUser(userId);
+        if (amount > user.points) {
+            await interaction.reply({ content: "You are too broke to gamble that amount.", ephemeral: true });
+            return;
+        }
+
+        await updateUserPoints(userId, -amount);
+
+        spinningUsers.add(userId);
+        const ovoce = ["🍒", "🍇", "🍍", "🍉", "⭐", "7️⃣"];
+        let spin1 = 0, spin2 = 0, spin3 = 0;
+        let ticks = 0;
+
+        spin1 = Math.floor(Math.random() * ovoce.length);
+        spin2 = Math.floor(Math.random() * ovoce.length);
+        spin3 = Math.floor(Math.random() * ovoce.length);
+
+        await interaction.reply(`${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} (5 spins remaining)`);
+
+        const interval = setInterval(async () => {
+            spin1 = Math.floor(Math.random() * ovoce.length);
+            spin2 = Math.floor(Math.random() * ovoce.length);
+            spin3 = Math.floor(Math.random() * ovoce.length);
+
+            ticks++;
+
+            if (spin1 === spin2 && spin2 === spin3) {
+                clearInterval(interval);
+                const win = amount * 10;
+                await updateUserPoints(userId, win);
+                await interaction.editReply(`🎉 Jackpot! ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You won ${win} points!`);
+                spinningUsers.delete(userId);
+                return;
+            }
+
+            if (ticks >= 5) {
+                clearInterval(interval);
+                await interaction.editReply(`💀 Final result: ${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} — You lost ${amount} points.`);
+                spinningUsers.delete(userId);
+            } else {
+                await interaction.editReply(`${ovoce[spin1]} ${ovoce[spin2]} ${ovoce[spin3]} (${5 - ticks} spins remaining)`);
+            }
+        }, 1000);
+    }
+
+    // ---- /leaderboard ----
+    if (interaction.commandName === "leaderboard") {
+        const top = await asyncDB(() => db.prepare("SELECT user_id, points FROM users ORDER BY points DESC LIMIT 5").all());
+        if (top.length === 0) {
+            await interaction.reply("No data yet. Speak more.");
+            return;
+        }
+        const lines = top.map((row, i) => `${i + 1}. <@${row.user_id}> — ${row.points} pts`);
+        await interaction.reply("**Leaderboard**\n" + lines.join("\n"));
+    }
+});
+
 // ---- Handle Points ----
 async function handlePoints(message) {
     const userId = message.author.id;

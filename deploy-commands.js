@@ -56,7 +56,24 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName("leaderboard")
-    .setDescription("Show top points leaderboard")
+    .setDescription("Show top points leaderboard"),
+  
+  new SlashCommandBuilder()
+    .setName("help")
+    .setDescription("Show help information"),
+
+  new SlashCommandBuilder()
+      .setName("shop")
+      .setDescription("Show the shop"),
+  
+  new SlashCommandBuilder()
+      .setName("buy")
+      .setDescription("Buy an item from the shop")
+      .addStringOption(option =>
+          option.setName("item")
+                .setDescription("Item to buy")
+                .setRequired(true))
+    
 ]
 .map(cmd => cmd.toJSON());
 

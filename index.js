@@ -185,9 +185,9 @@ client.on("interactionCreate", async interaction => {
         const now = Date.now();
         const lastSpin = spinCooldown.get(userId) || 0;
         if (now - lastSpin < spinCooldownMS) {
-            await interaction.reply({ 
+            await interaction.reply({
                 content: `You must wait ${Math.ceil((spinCooldownMS - (now - lastSpin))/1000)}s before spinning again.`,
-                ephemeral: true 
+                ephemeral: true
             });
             return;
         }
